@@ -1,4 +1,5 @@
 import React from 'react'
+import Posts from './Posts'
 import Stories from './Stories'
 
 const Feed = () => {
@@ -10,7 +11,9 @@ const Feed = () => {
     <section className='col-span-2'>
         {/* Stories */}
         <Stories />
+        
         {/* Posts */}
+        <Posts />
     </section>
 
      {/* Section 2 */}
