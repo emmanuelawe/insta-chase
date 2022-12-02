@@ -3,12 +3,43 @@ import { useRecoilState } from 'recoil'
 import { modalState } from '../atoms/modalAtom'
 import { Dialog, Transition } from '@headlessui/react'
 import { CameraIcon } from '@heroicons/react/outline'
+import {db, storage} from '../firebase'
+import {useSession} from 'next-auth/react'
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { ref } from 'firebase/storage'
 
 const Modal = () => {
+    const {data: session} = useSession()
     const [open, setOpen] = useRecoilState(modalState)
     const filePickerRef = useRef(null)
     const captionRef = useRef(null)
+    const [loading, setLoading] = useState(false)
     const [selectedFile, setSelectedFile] = useState(null)
+
+    const uploadPost = async () => {
+        if(loading) return
+
+        setLoading(true)
+
+        // 1. Create a post and add to Firestore 'posts' collection
+        // 2. Get the post ID for the newly created post
+        // 3. Upload the image to Firebase storage with post ID
+        // 4. Get a download URL from Firebase storage and update the original post with image
+
+        const docRef = await addDoc(collection(db, 'posts'), {
+            username: session.user.username,
+            caption: captionRef.current.value,
+            profileImg: session.user.image,
+            timestamp: serverTimestamp() 
+        })
+
+        console.log("New doc added with ID", docRef.id)
+
+        const imageRef = ref(storage, `posts/${docRef.id}/image`)
+
+        
+
+    }
 
     const addImageToPost = (e) => {
         const reader = new FileReader()
