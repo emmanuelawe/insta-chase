@@ -5,8 +5,8 @@ import { Dialog, Transition } from '@headlessui/react'
 import { CameraIcon } from '@heroicons/react/outline'
 import {db, storage} from '../firebase'
 import {useSession} from 'next-auth/react'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
-import { ref } from 'firebase/storage'
+import { addDoc, collection, doc, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { ref, getDownloadURL, uploadString } from 'firebase/storage'
 
 const Modal = () => {
     const {data: session} = useSession()
@@ -36,6 +36,17 @@ const Modal = () => {
         console.log("New doc added with ID", docRef.id)
 
         const imageRef = ref(storage, `posts/${docRef.id}/image`)
+
+        await uploadString(imageRef, selectedFile, "data_url").then(async snapshot => {
+            const downloadURL = await getDownloadURL(imageRef)
+            await updateDoc(doc(db, 'posts', docRef.id), {
+                image: downloadURL
+            })
+        })
+
+        setOpen(false)
+        setLoading(false)
+        setSelectedFile(null)
 
         
 
@@ -147,15 +158,14 @@ const Modal = () => {
     <div className='mt-5 sm:mt-6'>
     <button
     type='button'
-    // disabled={!selectedFile}
+    onClick={uploadPost}
+    disabled={!selectedFile}
     className='inline-flex justify-center w-full rounded-md border border-transparent
     shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white 
     hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm disabled:bg-gray-300
     disabled:cursor-not-allowed hover:disabled:bg-gray-300'
-    // onClick={uploadPost}
-    >
-    Upload Post
-    {/* {loading ? 'Uploading...' : 'Upload Post'} */}
+     >
+    {loading ? 'Uploading...' : 'Upload Post'}
     </button>
     </div>
     </div>
