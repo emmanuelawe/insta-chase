@@ -18,7 +18,7 @@ const Home = () => {
       <Feed />
 
       {/* Modal */}
-      <Modal />
+      {/* <Modal /> */}
 
     </div>
   )

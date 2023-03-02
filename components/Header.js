@@ -3,7 +3,7 @@ import React from 'react'
 import {
     SearchIcon, PlusCircleIcon,
     UserGroupIcon, HeartIcon,
-    PaperAirplaneIcon, MenuIcon
+    PaperAirplaneIcon, MenuIcon, LoginIcon
 } from '@heroicons/react/outline'
 import {HomeIcon} from '@heroicons/react/solid'
 import { signIn, signOut, useSession } from 'next-auth/react'
@@ -75,7 +75,12 @@ function Header() {
     </>
     ): 
     (
-        <button onClick={signIn}>Sign In</button>
+        <div>
+        <button onClick={signIn} className='hidden md:text-base md:flex'>Sign In</button>
+        <button onClick={signIn} className='md:hidden flex'>
+        <LoginIcon className='flex navBtn'/>
+        </button>
+        </div>
     )}
     
     </div>
